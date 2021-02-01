@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table
+@Table(name = "employee")
 public class Employee implements Serializable {
 
     @Id
@@ -25,13 +25,14 @@ public class Employee implements Serializable {
     private String firstName;
     private String lastName;
     private Integer rank;
+    private Double salary;
     private Boolean isManager;
     private Boolean isCEO;
     @ManyToOne
-    @JoinColumn(name = "MANAGER_ID")
+    @JoinColumn(name = "managerId", referencedColumnName = "Id")
     private Employee manager;
-    @OneToMany(mappedBy = "manager")
-    private List<Employee> subordinates = new ArrayList<Employee>();
+    @OneToMany(mappedBy = "manager", fetch = FetchType.LAZY)
+    private final List<Employee> subordinates = new ArrayList<Employee>();
 
     protected Employee() {
 
@@ -41,6 +42,9 @@ public class Employee implements Serializable {
         this.firstName = firstName;
         this.lastName = lastName;
         this.rank = rank;
+        this.salary = rank * SalaryCoefficient.EMPLOYEE.getCoefficient();
+        this.isManager = false;
+        this.isCEO = false;
     }
 
     public Long getId() {
@@ -75,20 +79,45 @@ public class Employee implements Serializable {
         this.rank = rank;
     }
 
-    public Boolean getManager() {
+    public Double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(Double salary) {
+        this.salary = salary;
+    }
+
+    //public Employee getManager() {
+    //    return manager;
+    //}
+
+    public void setManager(Employee manager) {
+        manager.setIsManager(true);
+        this.manager = manager;
+    }
+
+    public Boolean getIsManager() {
         return isManager;
     }
 
-    public void setManager(Boolean manager) {
-        isManager = manager;
+    public void setIsManager(Boolean isManager) {
+        this.isManager = isManager;
     }
 
-    public Boolean getCEO() {
+    public Boolean getIsCEO() {
         return isCEO;
     }
 
-    public void setCEO(Boolean CEO) {
+    public void setIsCEO(Boolean CEO) {
         isCEO = CEO;
+    }
+
+    public List<Employee> getSubordinates() {
+        return subordinates;
+    }
+
+    public void setSubordinates(Employee employee) {
+        this.subordinates.add(employee);
     }
 
     @Override
@@ -98,8 +127,11 @@ public class Employee implements Serializable {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", rank=" + rank +
+                ", salary=" + salary +
                 ", isManager=" + isManager +
                 ", isCEO=" + isCEO +
+                ", manager=" + manager +
+                ", subordinates=" + subordinates +
                 '}';
     }
 }
