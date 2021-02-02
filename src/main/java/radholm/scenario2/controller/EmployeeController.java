@@ -2,6 +2,8 @@ package radholm.scenario2.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import radholm.scenario2.common.Role;
+import radholm.scenario2.common.RoleType;
 import radholm.scenario2.domain.Employee;
 import radholm.scenario2.service.EmployeeService;
 
@@ -20,13 +22,23 @@ public class EmployeeController {
     }
 
     @GetMapping(path = "/employees")
-    public List<Employee> getEmployees() {
-        return employeeService.getEmployees();
+    public List<Employee> getAllEmployees() {
+        return employeeService.getAllEmployees();
+    }
+
+    @GetMapping(path = "/managers")
+    public List<Employee> getAllManagers(@RequestParam(required = false) Boolean getSelf) {
+        if (getSelf != null && getSelf) {
+            return employeeService.getAllManagers();
+        } else if (getSelf != null) {
+            //return all but self
+        }
+        return employeeService.getAllManagers();
     }
 
     @PostMapping
     public void addEmployee(@RequestBody Employee employee) {
-        employeeService.addEmployee(employee);
+        employeeService.addEmployee(new Employee(employee.getFirstName(), employee.getLastName(), employee.getRank(), new Role(RoleType.EMPLOYEE)));
     }
 
     @DeleteMapping(path = "{employeeId}")

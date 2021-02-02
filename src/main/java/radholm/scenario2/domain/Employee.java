@@ -1,6 +1,6 @@
 package radholm.scenario2.domain;
 
-import radholm.scenario2.common.SalaryCoefficient;
+import radholm.scenario2.common.Role;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -27,7 +27,9 @@ public class Employee implements Serializable {
     private Integer rank;
     private Double salary;
     private Boolean isManager;
-    private Boolean isCEO;
+    private Boolean isCeo;
+    @Transient
+    private Role role;
     @ManyToOne
     @JoinColumn(name = "managerId", referencedColumnName = "Id")
     private Employee manager;
@@ -38,13 +40,14 @@ public class Employee implements Serializable {
 
     }
 
-    public Employee(String firstName, String lastName, Integer rank) {
+    public Employee(String firstName, String lastName, Integer rank, Role role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.rank = rank;
-        this.salary = rank * SalaryCoefficient.EMPLOYEE.getCoefficient();
+        this.salary = rank * role.getSalaryCoefficient();
         this.isManager = false;
-        this.isCEO = false;
+        this.isCeo = false;
+        this.role = role;
     }
 
     public Long getId() {
@@ -87,10 +90,6 @@ public class Employee implements Serializable {
         this.salary = salary;
     }
 
-    //public Employee getManager() {
-    //    return manager;
-    //}
-
     public void setManager(Employee manager) {
         manager.setIsManager(true);
         this.manager = manager;
@@ -104,12 +103,12 @@ public class Employee implements Serializable {
         this.isManager = isManager;
     }
 
-    public Boolean getIsCEO() {
-        return isCEO;
+    public Boolean getIsCeo() {
+        return isCeo;
     }
 
-    public void setIsCEO(Boolean CEO) {
-        isCEO = CEO;
+    public void setIsCeo(Boolean CEO) {
+        isCeo = CEO;
     }
 
     public List<Employee> getSubordinates() {
@@ -129,7 +128,7 @@ public class Employee implements Serializable {
                 ", rank=" + rank +
                 ", salary=" + salary +
                 ", isManager=" + isManager +
-                ", isCEO=" + isCEO +
+                ", isCEO=" + isCeo +
                 ", manager=" + manager +
                 ", subordinates=" + subordinates +
                 '}';

@@ -8,7 +8,6 @@ import radholm.scenario2.repository.EmployeeRepository;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class EmployeeService {
@@ -20,24 +19,27 @@ public class EmployeeService {
         this.employeeRepository = employeeRepository;
     }
 
-    public List<Employee> getEmployees() {
+    public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
 
+    public List<Employee> getAllManagers() {
+        return employeeRepository.findAllManagers();
+    }
+
     public void addEmployee(Employee employee) {
-        Optional<Employee> employeeOptional = employeeRepository
-                .findEmployeeByFirstName(employee.getFirstName());
-        if (employeeOptional.isPresent()) {
-            throw new IllegalStateException("Combination of firstName and lastName already exists");
-        }
         employeeRepository.save(employee);
     }
 
     public void deleteEmployee(Long employeeId) {
         boolean exists = employeeRepository.existsById(employeeId);
+        List<Employee> subordinates = employeeRepository.findAllSubordinates(employeeId);
         if (!exists) {
             throw new IllegalStateException("Employee with id " + employeeId + " does not exists");
+        } else if (!subordinates.isEmpty()) {
+            throw new IllegalStateException("Employee with id " + employeeId + " has subordinates, cannot delete");
         }
+        employeeRepository.deleteById(employeeId);
     }
 
     @Transactional

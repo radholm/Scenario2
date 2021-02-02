@@ -31,18 +31,16 @@ class ListEmployeesComponent extends Component {
   deleteEmployeeClicked(id) {
     EmployeeDataService.deleteEmployee(id).then((response) => {
       this.setState({ message: `Delete of employee ${id} successful` });
-
+      console.log(response);
       this.refreshEmployees();
     });
   }
 
   addEmployeeClicked() {
-    this.props.history.push(`/employees/-1`);
+    this.props.history.push(`-1`);
   }
 
   updateEmployeeClicked(id) {
-    console.log("update " + id);
-
     this.props.history.push(`/employees/${id}`);
   }
 
