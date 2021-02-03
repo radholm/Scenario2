@@ -32,6 +32,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         };
     }
 
+    //MAKE HANDLE CEO -> EMPLOYEE RELATIONSHIP
     @Override
     public void addEmployee(Employee employee, Long superiorId) {
         Optional<Employee> optionalSuperior = employeeRepository.findManagerById(superiorId);

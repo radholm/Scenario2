@@ -1,7 +1,8 @@
-package radholm.scenario2.common;
+package radholm.scenario2.configuration;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import radholm.scenario2.domain.Employee;
 import radholm.scenario2.repository.EmployeeRepository;
@@ -9,9 +10,8 @@ import radholm.scenario2.repository.EmployeeRepository;
 import java.util.List;
 
 @Configuration
+@ComponentScan(basePackageClasses = Employee.class)
 public class EmployeeConfig {
-
-    @Bean
 
     @Bean
     CommandLineRunner commandLineRunner(EmployeeRepository repository) {

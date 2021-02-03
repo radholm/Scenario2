@@ -42,10 +42,11 @@ public class EmployeeController implements Serializable {
         employeeService.deleteEmployee(employeeId);
     }
 
-    @PutMapping(path = "{roleType}/{employeeId}")
+    @PutMapping(value = {"{roleType}/{employeeId}"})
     public void updateEmployee(@PathVariable("employeeId") Long employeeId,
                                @PathVariable("roleType") RoleType roleType,
                                @RequestBody Employee employee) {
+
         employeeService.updateEmployee(employeeId, employee.getFirstName(), employee.getLastName(), employee.getRank());
     }
 }

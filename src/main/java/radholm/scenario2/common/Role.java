@@ -9,7 +9,7 @@ public class Role implements Serializable {
     private Boolean isManager;
     private Boolean isCeo;
 
-    protected Role() {
+    public Role() {
 
     }
 

@@ -13,15 +13,7 @@ import java.util.List;
 public class Employee implements Serializable {
 
     @Id
-    @SequenceGenerator(
-            name = "employee_sequence",
-            sequenceName = "employee_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "employee_sequence"
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String firstName;
     private String lastName;
@@ -29,8 +21,6 @@ public class Employee implements Serializable {
     private Double salary;
     private Boolean isManager;
     private Boolean isCeo;
-    @Transient
-    private Role role;
     @ManyToOne
     @JoinColumn(name = "managerId", referencedColumnName = "Id")
     private Employee manager;
@@ -45,7 +35,6 @@ public class Employee implements Serializable {
         this.firstName = firstName;
         this.lastName = lastName;
         this.rank = rank;
-        this.role = role;
         this.salary = rank * role.getSalaryCoefficient();
         this.isManager = role.getIsManager();
         this.isCeo = role.getIsCeo();
@@ -134,7 +123,6 @@ public class Employee implements Serializable {
                 ", salary=" + salary +
                 ", isManager=" + isManager +
                 ", isCeo=" + isCeo +
-                ", role=" + role +
                 ", manager=" + manager +
                 ", subordinates=" + subordinates +
                 '}';
