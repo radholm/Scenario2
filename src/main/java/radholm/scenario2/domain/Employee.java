@@ -1,5 +1,6 @@
 package radholm.scenario2.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import radholm.scenario2.common.Role;
 
 import javax.persistence.*;
@@ -44,10 +45,10 @@ public class Employee implements Serializable {
         this.firstName = firstName;
         this.lastName = lastName;
         this.rank = rank;
-        this.salary = rank * role.getSalaryCoefficient();
-        this.isManager = false;
-        this.isCeo = false;
         this.role = role;
+        this.salary = rank * role.getSalaryCoefficient();
+        this.isManager = role.getIsManager();
+        this.isCeo = role.getIsCeo();
     }
 
     public Long getId() {
@@ -90,8 +91,12 @@ public class Employee implements Serializable {
         this.salary = salary;
     }
 
+    @JsonIgnore
+    public Employee getManager() {
+        return manager;
+    }
+
     public void setManager(Employee manager) {
-        manager.setIsManager(true);
         this.manager = manager;
     }
 
@@ -128,7 +133,8 @@ public class Employee implements Serializable {
                 ", rank=" + rank +
                 ", salary=" + salary +
                 ", isManager=" + isManager +
-                ", isCEO=" + isCeo +
+                ", isCeo=" + isCeo +
+                ", role=" + role +
                 ", manager=" + manager +
                 ", subordinates=" + subordinates +
                 '}';

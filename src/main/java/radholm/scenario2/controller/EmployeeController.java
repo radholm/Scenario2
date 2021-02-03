@@ -7,12 +7,13 @@ import radholm.scenario2.common.RoleType;
 import radholm.scenario2.domain.Employee;
 import radholm.scenario2.service.EmployeeService;
 
+import java.io.Serializable;
 import java.util.List;
 
 @CrossOrigin(origins = {"http://localhost:3000"})
 @RestController
-@RequestMapping(path = "/api/v1")
-public class EmployeeController {
+@RequestMapping(path = "/api/v1/")
+public class EmployeeController implements Serializable {
 
     private final EmployeeService employeeService;
 
@@ -21,24 +22,19 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-    @GetMapping(path = "/employees")
-    public List<Employee> getAllEmployees() {
-        return employeeService.getAllEmployees();
+    @GetMapping(path = "{roleType}")
+    public List<Employee> getEmployees(@PathVariable("roleType") RoleType roleType,
+                                       @RequestParam(required = false) Boolean getSelf) {
+        return employeeService.getEmployees(roleType);
     }
 
-    @GetMapping(path = "/managers")
-    public List<Employee> getAllManagers(@RequestParam(required = false) Boolean getSelf) {
-        if (getSelf != null && getSelf) {
-            return employeeService.getAllManagers();
-        } else if (getSelf != null) {
-            //return all but self
-        }
-        return employeeService.getAllManagers();
-    }
-
-    @PostMapping
-    public void addEmployee(@RequestBody Employee employee) {
-        employeeService.addEmployee(new Employee(employee.getFirstName(), employee.getLastName(), employee.getRank(), new Role(RoleType.EMPLOYEE)));
+    @PostMapping(value = {"{roleType}", "{roleType}/{superiorId}"})
+    public void addEmployee(@PathVariable("roleType") RoleType roleType,
+                            @PathVariable(value = "superiorId", required = false) Long superiorId,
+                            @RequestBody Employee employee) {
+        superiorId = superiorId == null ? 0L : superiorId;
+        Employee emp = new Employee(employee.getFirstName(), employee.getLastName(), employee.getRank(), new Role(roleType));
+        employeeService.addEmployee(emp, superiorId);
     }
 
     @DeleteMapping(path = "{employeeId}")
@@ -46,11 +42,10 @@ public class EmployeeController {
         employeeService.deleteEmployee(employeeId);
     }
 
-    @PutMapping(path = "{employeeId}")
+    @PutMapping(path = "{roleType}/{employeeId}")
     public void updateEmployee(@PathVariable("employeeId") Long employeeId,
-                               @RequestParam(required = false) String firstName,
-                               @RequestParam(required = false) String lastName,
-                               @RequestParam(required = false) Integer rank) {
-        employeeService.updateEmployee(employeeId, firstName, lastName, rank);
+                               @PathVariable("roleType") RoleType roleType,
+                               @RequestBody Employee employee) {
+        employeeService.updateEmployee(employeeId, employee.getFirstName(), employee.getLastName(), employee.getRank());
     }
 }
