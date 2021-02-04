@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entity for each employee in the organization
+ */
 @Entity
 @Table(name = "employee")
 public class Employee implements Serializable {

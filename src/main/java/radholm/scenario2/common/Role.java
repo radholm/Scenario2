@@ -2,6 +2,9 @@ package radholm.scenario2.common;
 
 import java.io.Serializable;
 
+/**
+ * Class to help define roles
+ */
 public class Role implements Serializable {
 
     private RoleType type;
@@ -13,6 +16,11 @@ public class Role implements Serializable {
 
     }
 
+    /**
+     * Initializes a specific role
+     *
+     * @param type the role to create
+     */
     public Role(RoleType type) {
         this.type = type;
         this.salaryCoefficient = salaryCoefficient(type);
@@ -20,6 +28,12 @@ public class Role implements Serializable {
         this.isCeo = isCeo(type);
     }
 
+    /**
+     * Gets the salary coefficient for the specified role
+     *
+     * @param type the specified role
+     * @return the salary coefficient
+     */
     private static Double salaryCoefficient(RoleType type) {
         return switch (type) {
             case EMPLOYEE -> 1.125;
@@ -28,6 +42,12 @@ public class Role implements Serializable {
         };
     }
 
+    /**
+     * Fetches if a role is considered a manager role
+     *
+     * @param type the specified role
+     * @return true if role is a manager role, false otherwise
+     */
     private static Boolean isManager(RoleType type) {
         return switch (type) {
             case EMPLOYEE -> false;
@@ -35,6 +55,12 @@ public class Role implements Serializable {
         };
     }
 
+    /**
+     * Fetches if a role is considered a CEO role
+     *
+     * @param type the specified role
+     * @return true if role is a CEO role, false otherwise
+     */
     private static Boolean isCeo(RoleType type) {
         return switch (type) {
             case CEO -> true;
@@ -54,7 +80,15 @@ public class Role implements Serializable {
         return isManager;
     }
 
+    public void setIsManager(Boolean isManager) {
+        this.isManager = isManager;
+    }
+
     public Boolean getIsCeo() {
         return isCeo;
+    }
+
+    public void getIsManager(Boolean isCeo) {
+        this.isCeo = isCeo;
     }
 }

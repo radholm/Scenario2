@@ -6,6 +6,9 @@ import radholm.scenario2.domain.Employee;
 import javax.transaction.Transactional;
 import java.util.List;
 
+/**
+ * Interface that should be implemented by every service class
+ */
 public interface EmployeeService {
 
     List<Employee> getEmployees(RoleType roleType);
@@ -15,5 +18,5 @@ public interface EmployeeService {
     void deleteEmployee(Long employeeId);
 
     @Transactional
-    void updateEmployee(Long employeeId, String firstName, String lastName, Integer rank);
+    void updateEmployee(Long employeeId, Employee empUpdate, Long superiorId);
 }

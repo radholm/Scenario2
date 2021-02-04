@@ -7,8 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import radholm.scenario2.domain.Employee;
 import radholm.scenario2.repository.EmployeeRepository;
 
-import java.util.List;
-
 @Configuration
 @ComponentScan(basePackageClasses = Employee.class)
 public class EmployeeConfig {
@@ -28,7 +26,7 @@ public class EmployeeConfig {
             //emp3.setSubordinates(emp4);
 
             //repository.saveAll(
-            //        List.of(emp1, emp2, emp3, emp4)
+            //        List.of(emp1)
             //);
         };
     }

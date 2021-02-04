@@ -9,6 +9,9 @@ import radholm.scenario2.domain.Employee;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * DAO/Repository interface to fetch data from the database
+ */
 @Repository
 public interface EmployeeRepository
         extends JpaRepository<Employee, Long> {
@@ -24,10 +27,6 @@ public interface EmployeeRepository
 
     @Query(value = "SELECT * FROM EMPLOYEE e WHERE e.is_ceo = 1", nativeQuery = true)
     Optional<Employee> findCeo();
-
-    //is this used?
-    @Query(value = "SELECT * FROM EMPLOYEE e WHERE e.id = :subordinateId", nativeQuery = true)
-    Optional<Employee> findSuperior(@Param("subordinateId") Long subordinateId);
 
     @Query(value = "SELECT * FROM EMPLOYEE e WHERE e.manager_id = :superiorId", nativeQuery = true)
     List<Employee> findAllSubordinates(@Param("superiorId") Long superiorId);

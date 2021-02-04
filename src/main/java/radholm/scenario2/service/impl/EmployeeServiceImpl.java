@@ -13,6 +13,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Service class that implements the service interface and business logic
+ */
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
@@ -23,6 +26,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         this.employeeRepository = employeeRepository;
     }
 
+    /**
+     * Gets/Fetches employees of certain role/roles
+     *
+     * @param roleType which roleType to fetch
+     * @return a list of the employees belonging to the context (roleType)
+     */
     @Override
     public List<Employee> getEmployees(RoleType roleType) {
         return switch (roleType) {
@@ -32,7 +41,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         };
     }
 
-    //MAKE HANDLE CEO -> EMPLOYEE RELATIONSHIP
+    /**
+     * Adds/Creates an employee with implemented business logic
+     * - A 'regular' employee must declare its superiorId
+     * - A 'regular' employee cannot be a subordinate of a CEO
+     * - Cannot create a CEO, if a CEO already exists
+     *
+     * @param superiorId an optional parameter, used to create 'regular' employees
+     * @param employee   the body/data that creates the employee
+     */
     @Override
     public void addEmployee(Employee employee, Long superiorId) {
         Optional<Employee> optionalSuperior = employeeRepository.findManagerById(superiorId);
@@ -49,6 +66,9 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new IllegalStateException("Cannot create employee, specify a valid manager id for the employee");
         } else if (optionalSuperior.isPresent() && !employee.getIsCeo()) {
             Employee superior = optionalSuperior.get();
+            if ((!employee.getIsManager() && !employee.getIsCeo()) && superior.getIsCeo()) {
+                throw new IllegalStateException("A 'regular' employee cannot be a subordinate of a CEO");
+            }
             employee.setManager(superior);
             superior.setSubordinates(employee);
             employeeRepository.save(superior);
@@ -56,6 +76,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.save(employee);
     }
 
+    /**
+     * Deletes an employee
+     * - An employee as manager/CEO cannot be deleted if it has subordinates
+     *
+     * @param employeeId the id of the employee to delete
+     */
     @Override
     public void deleteEmployee(Long employeeId) {
         boolean exists = employeeRepository.existsById(employeeId);
@@ -70,20 +96,62 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.deleteById(employeeId);
     }
 
+    /**
+     * Updates an employee
+     * - As "Transactional", the service provides a "managed state",
+     * where persisted entities can be manipulated directly
+     *
+     * @param employeeId the id of the employee to update
+     * @param superiorId an optional parameter, used to update the subordinates manager
+     * @param empUpdate  the body/data that updates the employee
+     */
     @Override
     @Transactional
-    public void updateEmployee(Long employeeId, String firstName, String lastName, Integer rank) {
-        Employee employee = employeeRepository.findById(employeeId)
+    public void updateEmployee(Long employeeId, Employee empUpdate, Long superiorId) {
+        if (empUpdate.getIsCeo()) {
+            employeeRepository.findCeo()
+                    .ifPresent(ceo -> {
+                        throw new IllegalStateException("Cannot assign CEO since id " + ceo.getId()
+                                + " is already a CEO");
+                    });
+        }
+        Employee emp = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new IllegalStateException("Employee with id " + employeeId
                         + " does not exists"));
-        if (firstName != null && firstName.length() > 0 && !Objects.equals(employee.getFirstName(), firstName)) {
-            employee.setFirstName(firstName);
+        Optional<Employee> optionalSuperior = employeeRepository.findManagerById(superiorId);
+        if (!empUpdate.getIsManager() && (superiorId.equals(0L) || optionalSuperior.isEmpty())) {
+            throw new IllegalStateException("Cannot update employee, specify a valid manager id for the employee");
         }
-        if (lastName != null && lastName.length() > 0 && !Objects.equals(employee.getLastName(), lastName)) {
-            employee.setLastName(lastName);
+        if (optionalSuperior.isPresent() && !emp.getIsCeo()) {
+            Employee superior = optionalSuperior.get();
+            if ((!empUpdate.getIsManager() && !empUpdate.getIsCeo()) && superior.getIsCeo()) {
+                throw new IllegalStateException("A 'regular' employee cannot be a subordinate of a CEO");
+            }
+            emp.setManager(superior);
+            superior.setSubordinates(emp);
         }
-        if (rank >= 1 && 10 >= rank && !employee.getRank().equals(rank)) {
-            employee.setRank(rank);
+        if (empUpdate.getFirstName() != null
+                && empUpdate.getFirstName().length() > 0
+                && !Objects.equals(emp.getFirstName(), empUpdate.getFirstName())) {
+            emp.setFirstName(empUpdate.getFirstName());
+        }
+        if (empUpdate.getLastName() != null
+                && empUpdate.getLastName().length() > 0
+                && !Objects.equals(emp.getLastName(), empUpdate.getLastName())) {
+            emp.setLastName(empUpdate.getLastName());
+        }
+        if (empUpdate.getRank() >= 1
+                && 10 >= empUpdate.getRank()
+                && !emp.getRank().equals(empUpdate.getRank())) {
+            emp.setRank(empUpdate.getRank());
+            emp.setSalary(empUpdate.getSalary());
+        }
+        if (!Objects.equals(emp.getIsManager(), empUpdate.getIsManager())) {
+            emp.setIsManager(empUpdate.getIsManager());
+            emp.setSalary(empUpdate.getSalary());
+        } else if (!Objects.equals(emp.getIsCeo(), empUpdate.getIsCeo())) {
+            emp.setIsCeo(empUpdate.getIsCeo());
+            emp.setSalary(empUpdate.getSalary());
         }
     }
 }

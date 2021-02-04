@@ -57,6 +57,8 @@ class ListEmployeesComponent extends Component {
                 <th>Last Name</th>
                 <th>Rank</th>
                 <th>Salary</th>
+                <th>Manager</th>
+                <th>CEO</th>
                 <th>Update</th>
                 <th>Delete</th>
               </tr>
@@ -69,8 +71,8 @@ class ListEmployeesComponent extends Component {
                   <td>{employee.lastName}</td>
                   <td>{employee.rank}</td>
                   <td>{employee.salary}</td>
-                  {employee.isCEO ? "CEO" : ""}
-                  {employee.isManager ? "Manager" : "Employee"}
+                  <td>{employee.isManager ? "Yes" : ""}</td>
+                  <td>{employee.isCeo ? "Yes" : ""}</td>
                   <td>
                     {" "}
                     <button
