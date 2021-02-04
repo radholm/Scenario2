@@ -41,7 +41,7 @@ class ListEmployeesComponent extends Component {
   }
 
   updateEmployeeClicked(id) {
-    this.props.history.push(`/employees/${id}`);
+    this.props.history.push(`/employee/${id}`);
   }
 
   render() {

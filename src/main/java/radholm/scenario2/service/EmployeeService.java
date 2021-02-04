@@ -13,6 +13,8 @@ public interface EmployeeService {
 
     List<Employee> getEmployees(RoleType roleType);
 
+    Employee getEmployee(Long employeeId);
+
     void addEmployee(Employee employee, Long superiorId);
 
     void deleteEmployee(Long employeeId);

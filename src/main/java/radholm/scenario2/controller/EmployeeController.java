@@ -1,17 +1,20 @@
 package radholm.scenario2.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import radholm.scenario2.common.Role;
 import radholm.scenario2.common.RoleType;
 import radholm.scenario2.domain.Employee;
 import radholm.scenario2.service.EmployeeService;
 
+import javax.validation.Valid;
 import java.io.Serializable;
 import java.util.List;
 
 /**
- * Class that processes REST API requests, such as GET, POST, PUT, DELETE
+ * Controller that processes REST API requests, such as GET, POST, PUT and DELETE
  */
 @CrossOrigin(origins = {"http://localhost:3000"})
 @RestController
@@ -37,6 +40,17 @@ public class EmployeeController implements Serializable {
     }
 
     /**
+     * Gets/Fetches employees of certain role/roles
+     *
+     * @param employeeId which employee to get by id
+     * @return employee object
+     */
+    @GetMapping(path = "/employee/{employeeId}")
+    public Employee getEmployee(@PathVariable("employeeId") Long employeeId) {
+        return employeeService.getEmployee(employeeId);
+    }
+
+    /**
      * Adds/Creates an employee
      *
      * @param roleType   states the wanted role in the employee context
@@ -46,10 +60,17 @@ public class EmployeeController implements Serializable {
     @PostMapping(value = {"{roleType}", "{roleType}/{superiorId}"})
     public void addEmployee(@PathVariable("roleType") RoleType roleType,
                             @PathVariable(value = "superiorId", required = false) Long superiorId,
-                            @RequestBody Employee employee) {
-        superiorId = superiorId == null ? 0L : superiorId;
-        Employee emp = new Employee(employee.getFirstName(), employee.getLastName(), employee.getRank(), new Role(roleType));
-        employeeService.addEmployee(emp, superiorId);
+                            @RequestBody @Valid Employee employee,
+                            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            for (FieldError f : bindingResult.getFieldErrors()) {
+                throw new IllegalStateException(f.getField() + ": " + f.getDefaultMessage());
+            }
+        } else {
+            superiorId = superiorId == null ? 0L : superiorId;
+            Employee emp = new Employee(employee.getFirstName(), employee.getLastName(), employee.getRank(), new Role(roleType));
+            employeeService.addEmployee(emp, superiorId);
+        }
     }
 
     /**
@@ -74,9 +95,16 @@ public class EmployeeController implements Serializable {
     public void updateEmployee(@PathVariable("employeeId") Long employeeId,
                                @PathVariable("roleType") RoleType roleType,
                                @PathVariable(value = "superiorId", required = false) Long superiorId,
-                               @RequestBody Employee employee) {
-        superiorId = superiorId == null ? 0L : superiorId;
-        Employee emp = new Employee(employee.getFirstName(), employee.getLastName(), employee.getRank(), new Role(roleType));
-        employeeService.updateEmployee(employeeId, emp, superiorId);
+                               @RequestBody @Valid Employee employee,
+                               BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            for (FieldError f : bindingResult.getFieldErrors()) {
+                throw new IllegalStateException(f.getField() + ": " + f.getDefaultMessage());
+            }
+        } else {
+            superiorId = superiorId == null ? 0L : superiorId;
+            Employee emp = new Employee(employee.getFirstName(), employee.getLastName(), employee.getRank(), new Role(roleType));
+            employeeService.updateEmployee(employeeId, emp, superiorId);
+        }
     }
 }

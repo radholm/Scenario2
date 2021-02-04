@@ -1,23 +1,21 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/v1/";
+const API_URL = "http://localhost:8080/api/v1";
 const employeeEnum = "EMPLOYEE";
 const managerEnum = "MANAGER";
 const ceoEnum = "CEO";
 
 class EmployeeDataService {
   retrieveAllEmployees() {
-    return axios.get(`${API_URL}/${employeeEnum}`);
+    return axios.get(`${API_URL}/${managerEnum}`);
   }
 
-  addEmployee(employee) {
-    //name, role, rank etc
-    return axios.post(`${API_URL}/${employee}`);
+  retrieveEmployee(id) {
+    return axios.get(`${API_URL}/employee/${id}`);
   }
 
-  addEmployee(employee, superiorId) {
-    //name, role, rank etc
-    return axios.post(`${API_URL}/${employeeEnum}/${superiorId}`, employee);
+  addEmployee(roleType, employee, superiorId) {
+    return axios.post(`${API_URL}/${roleType}/${superiorId}`, employee);
   }
 
   updateEmployee(employeeId) {
@@ -25,14 +23,7 @@ class EmployeeDataService {
   }
 
   deleteEmployee(employeeId) {
-    return axios.delete(`${API_URL}/${employeeId}`).then(
-      (response) => {
-        console.log(response);
-      },
-      (error) => {
-        console.log(error.response.message);
-      }
-    );
+    return axios.delete(`${API_URL}/${employeeId}`);
   }
 }
 

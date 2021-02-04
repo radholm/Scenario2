@@ -42,6 +42,20 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     /**
+     * Get a certain employee
+     *
+     * @param employeeId the id of the desired employee
+     * @return an employee object
+     */
+    @Override
+    public Employee getEmployee(Long employeeId) {
+        Employee emp = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new IllegalStateException("Employee with id " + employeeId
+                        + " does not exists"));
+        return emp;
+    }
+
+    /**
      * Adds/Creates an employee with implemented business logic
      * - A 'regular' employee must declare its superiorId
      * - A 'regular' employee cannot be a subordinate of a CEO
@@ -59,9 +73,6 @@ public class EmployeeServiceImpl implements EmployeeService {
                         throw new IllegalStateException("Cannot assign CEO since id " + ceo.getId()
                                 + " is already a CEO");
                     });
-        } else if (!(employee.getRank() >= 1 && 10 >= employee.getRank())) {
-            throw new IllegalStateException("Cannot create employee since the rank " + employee.getRank()
-                    + "is not in the range 1<=rank<=10");
         } else if (!employee.getIsManager() && (superiorId.equals(0L) || optionalSuperior.isEmpty())) {
             throw new IllegalStateException("Cannot create employee, specify a valid manager id for the employee");
         } else if (optionalSuperior.isPresent() && !employee.getIsCeo()) {
@@ -84,12 +95,11 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public void deleteEmployee(Long employeeId) {
-        boolean exists = employeeRepository.existsById(employeeId);
+        employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new IllegalStateException("Employee with id " + employeeId
+                        + " does not exists"));
         List<Employee> subordinates = employeeRepository.findAllSubordinates(employeeId);
-        if (!exists) {
-            throw new IllegalStateException("Employee with id " + employeeId
-                    + " does not exists");
-        } else if (!subordinates.isEmpty()) {
+        if (!subordinates.isEmpty()) {
             throw new IllegalStateException("Employee with id " + employeeId
                     + " has subordinates, cannot delete");
         }
@@ -99,7 +109,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     /**
      * Updates an employee
      * - As "Transactional", the service provides a "managed state",
-     * where persisted entities can be manipulated directly
+     * whereas persisted entities can be manipulated directly
      *
      * @param employeeId the id of the employee to update
      * @param superiorId an optional parameter, used to update the subordinates manager
@@ -130,19 +140,13 @@ public class EmployeeServiceImpl implements EmployeeService {
             emp.setManager(superior);
             superior.setSubordinates(emp);
         }
-        if (empUpdate.getFirstName() != null
-                && empUpdate.getFirstName().length() > 0
-                && !Objects.equals(emp.getFirstName(), empUpdate.getFirstName())) {
+        if (!Objects.equals(emp.getFirstName(), empUpdate.getFirstName())) {
             emp.setFirstName(empUpdate.getFirstName());
         }
-        if (empUpdate.getLastName() != null
-                && empUpdate.getLastName().length() > 0
-                && !Objects.equals(emp.getLastName(), empUpdate.getLastName())) {
+        if (!Objects.equals(emp.getLastName(), empUpdate.getLastName())) {
             emp.setLastName(empUpdate.getLastName());
         }
-        if (empUpdate.getRank() >= 1
-                && 10 >= empUpdate.getRank()
-                && !emp.getRank().equals(empUpdate.getRank())) {
+        if (!emp.getRank().equals(empUpdate.getRank())) {
             emp.setRank(empUpdate.getRank());
             emp.setSalary(empUpdate.getSalary());
         }

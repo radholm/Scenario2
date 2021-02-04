@@ -1,9 +1,15 @@
 package radholm.scenario2.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import radholm.scenario2.common.Role;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +24,15 @@ public class Employee implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotNull
+    @Size(min = 2, max = 30)
     private String firstName;
+    @NotNull
+    @Size(min = 2, max = 30)
     private String lastName;
+    @NotNull
+    @Min(1)
+    @Max(10)
     private Integer rank;
     private Double salary;
     private Boolean isManager;
