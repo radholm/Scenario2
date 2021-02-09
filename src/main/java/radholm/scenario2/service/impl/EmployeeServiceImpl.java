@@ -1,6 +1,7 @@
 package radholm.scenario2.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import radholm.scenario2.common.RoleType;
 import radholm.scenario2.domain.Employee;
@@ -33,6 +34,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @return a list of the employees belonging to the context (roleType)
      */
     @Override
+    @Async
     public List<Employee> getEmployees(RoleType roleType) {
         return switch (roleType) {
             case EMPLOYEE -> employeeRepository.findAllEmployees();
@@ -48,6 +50,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @return an employee object
      */
     @Override
+    @Async
     public Employee getEmployee(Long employeeId) {
         Employee emp = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new IllegalStateException("Employee with id " + employeeId
@@ -65,6 +68,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param employee   the body/data that creates the employee
      */
     @Override
+    @Async
     public void addEmployee(Employee employee, Long superiorId) {
         Optional<Employee> optionalSuperior = employeeRepository.findManagerById(superiorId);
         if (employee.getIsCeo()) {
@@ -94,6 +98,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param employeeId the id of the employee to delete
      */
     @Override
+    @Async
     public void deleteEmployee(Long employeeId) {
         employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new IllegalStateException("Employee with id " + employeeId
@@ -116,6 +121,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param empUpdate  the body/data that updates the employee
      */
     @Override
+    @Async
     @Transactional
     public void updateEmployee(Long employeeId, Employee empUpdate, Long superiorId) {
         if (empUpdate.getIsCeo()) {
