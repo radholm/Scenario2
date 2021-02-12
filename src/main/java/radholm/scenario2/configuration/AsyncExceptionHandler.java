@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+/**
+ * Class that handles exceptions of threads
+ */
 @Component
 public class AsyncExceptionHandler implements AsyncUncaughtExceptionHandler {
 

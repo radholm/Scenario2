@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import radholm.scenario2.common.Role;
 import radholm.scenario2.common.RoleType;
@@ -17,16 +18,23 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
- * Config class that contains Configuration Metadata and supports Dependency Injection
+ * Config class that contains Configuration Metadata and Dependency Injection
  */
 @Configuration
 @ComponentScan(basePackages = {"radholm.scenario2"})
+@EnableAsync
 public class EmployeeConfig extends AsyncConfigurerSupport {
 
     @Autowired
     private AsyncExceptionHandler asyncExceptionHandler;
 
+    /**
+     * Method that implements an asynchronous executor
+     *
+     * @return an async executor
+     */
     @Override
+    @Bean
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor te = new ThreadPoolTaskExecutor();
         te.setCorePoolSize(4);
@@ -43,7 +51,7 @@ public class EmployeeConfig extends AsyncConfigurerSupport {
     }
 
     /**
-     * Class to configure/seed database on create
+     * Method to configure/seed database on create
      * Remember that this data 'skips' the business logic and relations
      *
      * @param repository DAO context

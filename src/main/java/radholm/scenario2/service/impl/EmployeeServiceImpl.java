@@ -34,7 +34,6 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @return a list of the employees belonging to the context (roleType)
      */
     @Override
-    @Async
     public List<Employee> getEmployees(RoleType roleType) {
         return switch (roleType) {
             case EMPLOYEE -> employeeRepository.findAllEmployees();
@@ -50,7 +49,6 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @return an employee object
      */
     @Override
-    @Async
     public Employee getEmployee(Long employeeId) {
         Employee emp = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new IllegalStateException("Employee with id " + employeeId
