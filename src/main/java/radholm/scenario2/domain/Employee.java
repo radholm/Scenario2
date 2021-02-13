@@ -14,133 +14,146 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Entity for each employee in the organization
- */
+/** Entity for each employee in the organization */
 @Entity
 @Table(name = "employee")
 public class Employee implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @NotNull
-    @Size(min = 2, max = 30)
-    private String firstName;
-    @NotNull
-    @Size(min = 2, max = 30)
-    private String lastName;
-    @NotNull
-    @Min(1)
-    @Max(10)
-    private Integer rank;
-    private Double salary;
-    private Boolean isManager;
-    private Boolean isCeo;
-    @ManyToOne
-    @JoinColumn(name = "managerId", referencedColumnName = "Id")
-    private Employee manager;
-    @OneToMany(mappedBy = "manager", fetch = FetchType.LAZY)
-    private final List<Employee> subordinates = new ArrayList<Employee>();
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    protected Employee() {
+  @NotNull
+  @Size(min = 2, max = 30)
+  private String firstName;
 
-    }
+  @NotNull
+  @Size(min = 2, max = 30)
+  private String lastName;
 
-    public Employee(String firstName, String lastName, Integer rank, Role role) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.rank = rank;
-        this.salary = rank * role.getSalaryCoefficient();
-        this.isManager = role.getIsManager();
-        this.isCeo = role.getIsCeo();
-    }
+  @NotNull
+  @Min(1)
+  @Max(10)
+  private Integer rank;
 
-    public Long getId() {
-        return id;
-    }
+  private Double salary;
+  private Boolean isManager;
+  private Boolean isCeo;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  @ManyToOne
+  @JoinColumn(name = "managerId", referencedColumnName = "Id")
+  private Employee manager;
 
-    public String getFirstName() {
-        return firstName;
-    }
+  @OneToMany(mappedBy = "manager", fetch = FetchType.LAZY)
+  private final List<Employee> subordinates = new ArrayList<Employee>();
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+  protected Employee() {}
 
-    public String getLastName() {
-        return lastName;
-    }
+  public Employee(String firstName, String lastName, Integer rank, Role role) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.rank = rank;
+    this.salary = rank * role.getSalaryCoefficient();
+    this.isManager = role.getIsManager();
+    this.isCeo = role.getIsCeo();
+  }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public Integer getRank() {
-        return rank;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public void setRank(Integer rank) {
-        this.rank = rank;
-    }
+  public String getFirstName() {
+    return firstName;
+  }
 
-    public Double getSalary() {
-        return salary;
-    }
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
 
-    public void setSalary(Double salary) {
-        this.salary = salary;
-    }
+  public String getLastName() {
+    return lastName;
+  }
 
-    @JsonIgnore
-    public Employee getManager() {
-        return manager;
-    }
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
 
-    public void setManager(Employee manager) {
-        this.manager = manager;
-    }
+  public Integer getRank() {
+    return rank;
+  }
 
-    public Boolean getIsManager() {
-        return isManager;
-    }
+  public void setRank(Integer rank) {
+    this.rank = rank;
+  }
 
-    public void setIsManager(Boolean isManager) {
-        this.isManager = isManager;
-    }
+  public Double getSalary() {
+    return salary;
+  }
 
-    public Boolean getIsCeo() {
-        return isCeo;
-    }
+  public void setSalary(Double salary) {
+    this.salary = salary;
+  }
 
-    public void setIsCeo(Boolean CEO) {
-        isCeo = CEO;
-    }
+  @JsonIgnore
+  public Employee getManager() {
+    return manager;
+  }
 
-    public List<Employee> getSubordinates() {
-        return subordinates;
-    }
+  public void setManager(Employee manager) {
+    this.manager = manager;
+  }
 
-    public void setSubordinates(Employee employee) {
-        this.subordinates.add(employee);
-    }
+  public Boolean getIsManager() {
+    return isManager;
+  }
 
-    @Override
-    public String toString() {
-        return "Employee{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", rank=" + rank +
-                ", salary=" + salary +
-                ", isManager=" + isManager +
-                ", isCeo=" + isCeo +
-                ", manager=" + manager +
-                ", subordinates=" + subordinates +
-                '}';
-    }
+  public void setIsManager(Boolean isManager) {
+    this.isManager = isManager;
+  }
+
+  public Boolean getIsCeo() {
+    return isCeo;
+  }
+
+  public void setIsCeo(Boolean CEO) {
+    isCeo = CEO;
+  }
+
+  public List<Employee> getSubordinates() {
+    return subordinates;
+  }
+
+  public void setSubordinates(Employee employee) {
+    this.subordinates.add(employee);
+  }
+
+  @Override
+  public String toString() {
+    return "Employee{"
+        + "id="
+        + id
+        + ", firstName='"
+        + firstName
+        + '\''
+        + ", lastName='"
+        + lastName
+        + '\''
+        + ", rank="
+        + rank
+        + ", salary="
+        + salary
+        + ", isManager="
+        + isManager
+        + ", isCeo="
+        + isCeo
+        + ", manager="
+        + manager
+        + ", subordinates="
+        + subordinates
+        + '}';
+  }
 }

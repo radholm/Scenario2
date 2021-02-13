@@ -17,62 +17,57 @@ import radholm.scenario2.repository.EmployeeRepository;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-/**
- * Config class that contains Configuration Metadata and Dependency Injection
- */
+/** Config class that contains Configuration Metadata and Dependency Injection */
 @Configuration
 @ComponentScan(basePackages = {"radholm.scenario2"})
 @EnableAsync
 public class EmployeeConfig extends AsyncConfigurerSupport {
 
-    @Autowired
-    private AsyncExceptionHandler asyncExceptionHandler;
+  @Autowired private AsyncExceptionHandler asyncExceptionHandler;
 
-    /**
-     * Method that implements an asynchronous executor
-     *
-     * @return an async executor
-     */
-    @Override
-    @Bean
-    public Executor getAsyncExecutor() {
-        ThreadPoolTaskExecutor te = new ThreadPoolTaskExecutor();
-        te.setCorePoolSize(4);
-        te.setMaxPoolSize(8);
-        te.setQueueCapacity(512);
-        te.setThreadNamePrefix("Async-thread");
-        te.initialize();
-        return te;
-    }
+  /**
+   * Method that implements an asynchronous executor
+   *
+   * @return an async executor
+   */
+  @Override
+  @Bean
+  public Executor getAsyncExecutor() {
+    ThreadPoolTaskExecutor te = new ThreadPoolTaskExecutor();
+    te.setCorePoolSize(4);
+    te.setMaxPoolSize(8);
+    te.setQueueCapacity(512);
+    te.setThreadNamePrefix("Async-thread");
+    te.initialize();
+    return te;
+  }
 
-    @Override
-    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-        return asyncExceptionHandler;
-    }
+  @Override
+  public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+    return asyncExceptionHandler;
+  }
 
-    /**
-     * Method to configure/seed database on create
-     * Remember that this data 'skips' the business logic and relations
-     *
-     * @param repository DAO context
-     * @return commandline args
-     */
-    @Bean
-    CommandLineRunner commandLineRunner(EmployeeRepository repository) {
-        return args -> {
-            Employee emp1 = new Employee("Elon", "Musk", 10, new Role(RoleType.CEO));
-            Employee emp2 = new Employee("Karen", "Manager", 8, new Role(RoleType.MANAGER));
-            Employee emp3 = new Employee("Kanye", "West", 1, new Role(RoleType.EMPLOYEE));
+  /**
+   * Method to configure/seed database on create Remember that this data 'skips' the business logic
+   * and relations
+   *
+   * @param repository DAO context
+   * @return commandline args
+   */
+  @Bean
+  CommandLineRunner commandLineRunner(EmployeeRepository repository) {
+    return args -> {
+      Employee emp1 = new Employee("Elon", "Musk", 10, new Role(RoleType.CEO));
+      Employee emp2 = new Employee("Karen", "Manager", 8, new Role(RoleType.MANAGER));
+      Employee emp3 = new Employee("Kanye", "West", 1, new Role(RoleType.EMPLOYEE));
 
-            emp1.setSubordinates(emp2);
-            emp2.setManager(emp1);
+      emp1.setSubordinates(emp2);
+      emp2.setManager(emp1);
 
-            emp2.setSubordinates(emp3);
-            emp3.setManager(emp2);
+      emp2.setSubordinates(emp3);
+      emp3.setManager(emp2);
 
-            repository.saveAll(
-                    List.of(emp1, emp2, emp3)
-            );
-        };
-    }
+      repository.saveAll(List.of(emp1, emp2, emp3));
+    };
+  }
 }
