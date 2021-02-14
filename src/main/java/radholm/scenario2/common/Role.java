@@ -7,14 +7,10 @@ import java.io.Serializable;
  */
 public class Role implements Serializable {
 
-    private RoleType type;
-    private Double salaryCoefficient;
+    private final RoleType type;
+    private final Double salaryCoefficient;
     private Boolean isManager;
     private Boolean isCeo;
-
-    public Role() {
-
-    }
 
     /**
      * Initializes a specific role

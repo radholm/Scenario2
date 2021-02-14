@@ -50,10 +50,9 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public Employee getEmployee(Long employeeId) {
-        Employee emp = employeeRepository.findById(employeeId)
+        return employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new IllegalStateException("Employee with id " + employeeId
                         + " does not exists"));
-        return emp;
     }
 
     /**

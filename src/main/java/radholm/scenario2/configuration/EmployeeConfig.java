@@ -23,7 +23,11 @@ import java.util.concurrent.Executor;
 @EnableAsync
 public class EmployeeConfig extends AsyncConfigurerSupport {
 
-  @Autowired private AsyncExceptionHandler asyncExceptionHandler;
+  private final AsyncExceptionHandler asyncExceptionHandler;
+
+  public EmployeeConfig(AsyncExceptionHandler asyncExceptionHandler) {
+    this.asyncExceptionHandler = asyncExceptionHandler;
+  }
 
   /**
    * Method that implements an asynchronous executor
