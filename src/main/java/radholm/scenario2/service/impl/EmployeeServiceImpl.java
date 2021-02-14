@@ -3,12 +3,12 @@ package radholm.scenario2.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import radholm.scenario2.common.RoleType;
 import radholm.scenario2.domain.Employee;
 import radholm.scenario2.repository.EmployeeRepository;
 import radholm.scenario2.service.EmployeeService;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -120,7 +120,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     @Async
-    @Transactional
+    @Transactional(rollbackFor = IllegalStateException.class)
     public void updateEmployee(Long employeeId, Employee empUpdate, Long superiorId) {
         if (empUpdate.getIsCeo()) {
             employeeRepository.findCeo()
