@@ -84,7 +84,7 @@ public class Role implements Serializable {
         return isCeo;
     }
 
-    public void getIsManager(Boolean isCeo) {
+    public void setIsCeo(Boolean isCeo) {
         this.isCeo = isCeo;
     }
 }
