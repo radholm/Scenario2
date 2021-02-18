@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.*;
 import radholm.scenario2.common.Role;
 import radholm.scenario2.common.RoleType;
 import radholm.scenario2.domain.Employee;
+import radholm.scenario2.exception.ApiRequestException;
 import radholm.scenario2.service.EmployeeService;
 
 import javax.validation.Valid;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controller that processes REST API requests, such as GET, POST, PUT and DELETE
@@ -35,8 +37,11 @@ public class EmployeeController implements Serializable {
      * @return a list of the employees belonging to the context (roleType)
      */
     @GetMapping(path = "{roleType}")
-    public List<Employee> getEmployees(@PathVariable("roleType") RoleType roleType) {
-        return employeeService.getEmployees(roleType);
+    public List<Employee> getEmployees(@PathVariable("roleType") RoleType roleType) throws ApiRequestException {
+        Optional<List<Employee>> employees = employeeService.getEmployees(roleType);
+        employees.orElseThrow(() -> new ApiRequestException("Employee(s) with roleType " + roleType + " were/was not found"));
+        employees.get().stream().findAny().orElseThrow(() -> new ApiRequestException("Employee(s) with roleType " + roleType + " were/was not found"));
+        return employees.get();
     }
 
     /**
@@ -46,8 +51,10 @@ public class EmployeeController implements Serializable {
      * @return employee object
      */
     @GetMapping(path = "/employee/{employeeId}")
-    public Employee getEmployee(@PathVariable("employeeId") Long employeeId) {
-        return employeeService.getEmployee(employeeId);
+    public Employee getEmployee(@PathVariable("employeeId") Long employeeId) throws ApiRequestException {
+        Optional<Employee> employee = employeeService.getEmployee(employeeId);
+        employee.orElseThrow(() -> new ApiRequestException("Employee with Id " + employeeId + " was not found"));
+        return employee.get();
     }
 
     /**

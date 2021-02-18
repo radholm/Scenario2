@@ -5,15 +5,16 @@ import radholm.scenario2.domain.Employee;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Interface that should be implemented by every service class
  */
 public interface EmployeeService {
 
-    List<Employee> getEmployees(RoleType roleType);
+    Optional<List<Employee>> getEmployees(RoleType roleType);
 
-    Employee getEmployee(Long employeeId);
+    Optional<Employee> getEmployee(Long employeeId);
 
     void addEmployee(Employee employee, Long superiorId);
 

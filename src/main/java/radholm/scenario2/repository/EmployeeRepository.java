@@ -16,16 +16,19 @@ import java.util.Optional;
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     @Query(value = "SELECT * FROM EMPLOYEE", nativeQuery = true)
-    List<Employee> findAllEmployees();
+    Optional<List<Employee>> findAllEmployees();
+
+    @Query(value = "SELECT * FROM EMPLOYEE e WHERE e.id = :employeeId", nativeQuery = true)
+    Optional<Employee> findEmployeeById(@Param("employeeId") Long employeeId);
 
     @Query(value = "SELECT * FROM EMPLOYEE e WHERE e.is_manager = 1", nativeQuery = true)
-    List<Employee> findAllManagers();
+    Optional<List<Employee>> findAllManagers();
 
-    @Query(value = "SELECT * FROM EMPLOYEE e WHERE e.is_manager = 1 AND id = :superiorId", nativeQuery = true)
+    @Query(value = "SELECT * FROM EMPLOYEE e WHERE e.is_manager = 1 AND e.id = :superiorId", nativeQuery = true)
     Optional<Employee> findManagerById(@Param("superiorId") Long superiorId);
 
     @Query(value = "SELECT * FROM EMPLOYEE e WHERE e.is_ceo = 1", nativeQuery = true)
-    Optional<Employee> findCeo();
+    Optional<List<Employee>> findCeo();
 
     @Query(value = "SELECT * FROM EMPLOYEE e WHERE e.manager_id = :superiorId", nativeQuery = true)
     List<Employee> findAllSubordinates(@Param("superiorId") Long superiorId);

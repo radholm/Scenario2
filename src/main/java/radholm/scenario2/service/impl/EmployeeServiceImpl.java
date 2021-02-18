@@ -12,7 +12,6 @@ import radholm.scenario2.service.EmployeeService;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Service class that implements the service interface and business logic
@@ -34,11 +33,11 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @return a list of the employees belonging to the context (roleType)
      */
     @Override
-    public List<Employee> getEmployees(RoleType roleType) {
+    public Optional<List<Employee>> getEmployees(RoleType roleType) {
         return switch (roleType) {
             case EMPLOYEE -> employeeRepository.findAllEmployees();
             case MANAGER -> employeeRepository.findAllManagers();
-            case CEO -> employeeRepository.findCeo().stream().collect(Collectors.toList());
+            case CEO -> employeeRepository.findCeo();
         };
     }
 
@@ -49,10 +48,8 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @return an employee object
      */
     @Override
-    public Employee getEmployee(Long employeeId) {
-        return employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new IllegalStateException("Employee with id " + employeeId
-                        + " does not exists"));
+    public Optional<Employee> getEmployee(Long employeeId) {
+        return employeeRepository.findEmployeeById(employeeId);
     }
 
     /**
@@ -71,7 +68,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (employee.getIsCeo()) {
             employeeRepository.findCeo()
                     .ifPresent(ceo -> {
-                        throw new IllegalStateException("Cannot assign CEO since id " + ceo.getId()
+                        throw new IllegalStateException("Cannot assign CEO since id " + ceo.stream().findAny().get().getId()
                                 + " is already a CEO");
                     });
         } else if (!employee.getIsManager() && (superiorId.equals(0L) || optionalSuperior.isEmpty())) {
@@ -124,7 +121,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (empUpdate.getIsCeo()) {
             employeeRepository.findCeo()
                     .ifPresent(ceo -> {
-                        throw new IllegalStateException("Cannot assign CEO since id " + ceo.getId()
+                        throw new IllegalStateException("Cannot assign CEO since id " + ceo.stream().findAny().get().getId()
                                 + " is already a CEO");
                     });
         }
